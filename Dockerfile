@@ -24,27 +24,17 @@ RUN apt update && \
     apt install --yes --no-install-suggests --no-install-recommends ssh git g++ curl ca-certificates && \
     rm -r /var/lib/apt/lists
 
+ARG REPO_URL="https://github.com/kimjijiyoon/wekan.git"
+ARG BRANCH="master"
+
+# GitHub에서 클론 (depth=1은 최신 커밋만 가져와 빠름)
+RUN git clone --depth=1 --branch ${BRANCH} ${REPO_URL} workdir
+
 # Change to temporary working directory
 WORKDIR /workdir
 
-# Copy package.json and package-lock.json to install application dependencies
-COPY package.json .
-COPY package-lock.json .
-
 # Install build dependencies
 RUN $HOME/.meteor/meteor npm install --production
-
-# Copy meteor application configurations
-COPY .meteor .meteor
-
-# Copy application sources
-COPY packages packages
-COPY imports imports
-COPY config config
-COPY models models
-COPY public public
-COPY server server
-COPY client client
 
 # Build the application
 RUN $HOME/.meteor/meteor build --directory /build --allow-superuser

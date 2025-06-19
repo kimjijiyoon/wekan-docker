@@ -34,6 +34,19 @@ WeKan은 카드 기반의 협업 관리 도구로, 템플릿 관리, 사용자 �
 3. **"Create Card"** 버튼 클릭 시 카드 생성.
 ![alt text](images/image_temlateCreate.png)
 
+템플릿 데이터 형식
+```
+{
+   "files": [
+      {   id: "card-002",
+          title: "신규 기능 기획",
+          description: ""
+      },
+      { ... },
+      { ... }, 
+   ]
+}
+```
 ---
 
 ### **1.2 사용자 정의 필드**
@@ -61,7 +74,26 @@ WeKan은 카드 기반의 협업 관리 도구로, 템플릿 관리, 사용자 �
 3. 설정 후, 카드에서 API 응답 데이터를 기반으로 값을 선택 가능.  
    ![카드에서 태그값 설정](images/image-2.png)
    ![카드에서 태그값 설정](images/image-3.png)
+4. category 키 안에 value 는 배열안에 객체의 형태를 지니고 있으면 CategoryCd , SecondCategoryCd , ThirdCategory 키 값은 동일하다.
+   * 3뎁스로 제한
 
+```
+"customFields": {
+      "category": [
+        {
+          "CategoryCd": "P0",
+          "SecondCategoryCd": "A0",
+          "ThirdCategory": "B0"
+        },
+        {
+          "CategoryCd": "P0",
+          "SecondCategoryCd": "D0",
+          "ThirdCategory": "M0"
+        }
+      ],
+      "dd": "ddd"
+    }
+```
 ---
 
 ### **1.3 웹훅 알림**
@@ -75,6 +107,8 @@ WeKan은 카드 기반의 협업 관리 도구로, 템플릿 관리, 사용자 �
   - 라벨, 담당자
   - 사용자 정의 필드 값
   - 날짜 정보(시작일, 종료일 등)
+  - 첨부 파일
+    : Base64로 인코딩한 값을 보내고 있습니다. API 쪽에서는 그걸 Buffer로 디코딩해서 원본 파일로 만들면 됨.
 ```
 {
   event: 'cardMovedToStart',
@@ -124,8 +158,21 @@ WeKan은 카드 기반의 협업 관리 도구로, 템플릿 관리, 사용자 �
     listName: '시작',
     labels: [ '문서' ],
     user: '김지윤',
-    customFields: { tag: '["영업부/국내영업/서울","영 
-업부/국내영업/부산"]', '개발tag': null },
+    "customFields": {
+      "category": [
+        {
+          "CategoryCd": "P0",
+          "SecondCategoryCd": "A0",
+          "ThirdCategory": "B0"
+        },
+        {
+          "CategoryCd": "P0",
+          "SecondCategoryCd": "D0",
+          "ThirdCategory": "M0"
+        }
+      ],
+      "dd": "ddd"
+    }
     members: [ '김지윤', '이시은' ],
     assignees: [ '김지윤', '이시은' ],
     dates: {
@@ -133,7 +180,39 @@ WeKan은 카드 기반의 협업 관리 도구로, 템플릿 관리, 사용자 �
       start: '2025-01-27T04:57:00.000Z',
       due: '2025-01-31T08:00:00.000Z',
       end: null
-    }
+    },
+    "attachments": [
+      {
+        "id": "6853aa19f9ec9de65bb64d61",
+        "name": "docker-compose.yml",
+        "type": "application/octet-stream",
+        "size": 38429,
+        "storageStrategy": "filesystem",
+        "url": "http://localhost:3000/cdn/storage/attachments/6853aa19f9ec9de65bb64d61/original/6853aa19f9ec9de65bb64d61.yml",
+        "data": "IyBOb3RlOiBEbyBub3QgYWRkIHNpb......lDQo=",
+        "isModified": false
+      },
+      {
+        "id": "6853aa19f9ec9de65bb64d62",
+        "name": "Dockerfile",
+        "type": "application/octet-stream",
+        "size": 7481,
+        "storageStrategy": "filesystem",
+        "url": "http://localhost:3000/cdn/storage/attachments/6853aa19f9ec9de65bb64d62/original/6853aa19f9ec9de65bb64d62.",
+        "data": "RlJPTSBzY3JhdGNoIEFTIGRvd.....",
+        "isModified": false
+      },
+      {
+        "id": "6853aa19f9ec9de65bb64d63",
+        "name": "wekan.md",
+        "type": "application/octet-stream",
+        "size": 9191,
+        "storageStrategy": "filesystem",
+        "url": "http://localhost:3000/cdn/storage/attachments/6853aa19f9ec9de65bb64d63/original/6853aa19f9ec9de65bb64d63.md",
+        "data": "Iy....",
+        "isModified": false
+      }
+    ]
   }
 }
 ```
